@@ -1,0 +1,33 @@
+{
+	"name": "schoolsoft-scraper",
+	"version": "1.0.0",
+	"description": "SchoolSoft scraper because there is no official public API yet",
+	"main": "src/index.js",
+	"scripts": {
+		"test": "jest",
+		"lint": "eslint src/**/*.js"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/CarelessInternet/schoolsoft-wrapper.git"
+	},
+	"keywords": [
+		"schoolsoft"
+	],
+	"author": "CarelessInternet",
+	"license": "MIT",
+	"bugs": {
+		"url": "https://github.com/CarelessInternet/schoolsoft-wrapper/issues"
+	},
+	"homepage": "https://github.com/CarelessInternet/schoolsoft-wrapper#readme",
+	"devDependencies": {
+		"eslint": "^7.32.0",
+		"jest": "^27.2.4"
+	},
+	"dependencies": {
+		"puppeteer-core": "^10.4.0"
+	},
+	"engines": {
+		"node": ">=10.18.1"
+	}
+}
