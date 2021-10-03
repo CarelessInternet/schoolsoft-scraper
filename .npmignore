@@ -1,3 +1,4 @@
 /node_modules
 /tests
+.eslintrc.js
 .env
