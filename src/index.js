@@ -86,7 +86,6 @@ class SchoolSoft {
 	 * @async
 	 * @param {String} username - The username for the login
 	 * @param {String} password - The password for the login
-	 * @param {{0, 1, 2}} [userType] - The type of user requesting the login, default is 1 for student, 0 for staff, and 2 for guardians
 	 * @returns {(Promise<Boolean>|Promise<String>)} Returns the initial fetch request to the login page on success
 	 * @example
 	 * try {
@@ -95,7 +94,7 @@ class SchoolSoft {
 	 * 	console.error(err);
 	 * }
 	 */
-	login(username, password, userType = 1) {
+	login(username, password) {
 		return new Promise(async (resolve, reject) => {
 			try {
 				if (typeof username !== 'string') {
@@ -104,12 +103,9 @@ class SchoolSoft {
 				if (typeof password !== 'string') {
 					throw 'Password must be of type string';
 				}
-				if (typeof userType !== 'number') {
-					throw 'The user type must be a number';
-				}
 
 				await this.#open();
-				await this.#page.goto(`${this.baseURL}/Login.jsp?usertype=${userType}`);
+				await this.#page.goto(`${this.baseURL}/Login.jsp?usertype=1`);
 
 				await this.#page.type('input#ssusername', username);
 				await this.#page.type('input#sspassword', password);
