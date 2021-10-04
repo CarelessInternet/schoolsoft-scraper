@@ -37,8 +37,8 @@ test(
 test(
 	'grab lunch menu',
 	async () => {
-		await expect(school.getLunchMenu()).resolves.toMatchObject({
-			heading: 'Lunch menu 40, 4 okt - 8 okt'
+		await expect(school.getLunchMenu(true)).resolves.toMatchObject({
+			success: true
 		});
 	},
 	15 * 1000

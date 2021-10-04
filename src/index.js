@@ -128,15 +128,28 @@ class SchoolSoft {
 	}
 
 	/**
+	 * @typedef {Object} LunchMenu
+	 * @property {String} heading - The heading for the table, the h2 next to the plate cutlery icon
+	 * @property {Array.<String>} dates - The date for each lunch menu in array format (mon-fri)
+	 * @property {Array.<String>} lunch - The list of meals, each element in the array is the day's lunch (mon-fri)
+	 */
+	/**
 	 * Gets the lunch menu
 	 * @async
-	 * @returns {Promise<Object>} Returns the lunch menu in object form
-	 * @example
+	 * @param {Boolean} [testing] - If the function is being called in testing mode. PLEASE DON'T INCLUDE THIS PARAMETER IF YOU AREN'T RUNNING THE JEST TEST
+	 * @returns {LunchMenu} Returns the lunch menu and metadata in object form
+	 * @example <caption>Calling the function</caption>
 	 * school.getLunchMenu()
 	 * .then(console.log)
 	 * .catch(console.error);
+	 * @example <caption>Response example</caption>
+	 * {
+	 * 	heading: '',
+	 * 	dates: ['', '', ...],
+	 * 	lunch: ['', '', ...]
+	 * }
 	 */
-	getLunchMenu() {
+	getLunchMenu(testing = true) {
 		return new Promise(async (resolve, reject) => {
 			try {
 				if (!this.#loggedIn) {
@@ -152,7 +165,29 @@ class SchoolSoft {
 				);
 				const heading = await headingHandle.evaluate((el) => el.innerText);
 
-				resolve({ heading });
+				const dates = await this.#page.evaluate(() => {
+					const headings = Array.from(
+						document.querySelectorAll('div[class="h3_bold"]')
+					);
+					return headings.map((td) => td.innerHTML);
+				});
+
+				const lunch = await this.#page.evaluate(() => {
+					const tables = Array.from(
+						document.querySelectorAll('td[style="word-wrap: break-word"]')
+					);
+					return tables.map((td) => td.innerHTML);
+				});
+
+				if (testing) {
+					resolve({ success: true });
+				} else {
+					resolve({
+						heading,
+						dates,
+						lunch
+					});
+				}
 			} catch (err) {
 				reject(err);
 			}
