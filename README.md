@@ -1,4 +1,4 @@
-# schoolsoft-wrapper
+# schoolsoft-scraper
 
 ## Backstory
 
