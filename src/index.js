@@ -1,7 +1,7 @@
 const puppeteer = require('puppeteer-core');
 
 /**
- * The SchoolSoft class, everything is performed in here
+ * The SchoolSoft class, everything is performed in here. Only compatible with student accounts
  */
 class SchoolSoft {
 	/**
@@ -60,10 +60,9 @@ class SchoolSoft {
 	 * @async
 	 * @param {String} username - The username for the login
 	 * @param {String} password - The password for the login
-	 * @param {{0, 1, 2}} [userType] - The type of user requesting the login, default is 1 for student, 0 for staff, and 2 for guardians
 	 * @returns {(Promise<Boolean>|Promise<String>)} Returns the initial fetch request to the login page on success
 	 */
-	login(username, password, userType = 1) {
+	login(username, password) {
 		return new Promise(async (resolve, reject) => {
 			if (typeof username !== 'string') {
 				reject('Username must be of type string');
@@ -71,13 +70,10 @@ class SchoolSoft {
 			if (typeof password !== 'string') {
 				reject('Password must be of type string');
 			}
-			if (typeof userType !== 'number') {
-				reject('The user type must be a number');
-			}
 
 			try {
 				await this.#open();
-				await this.#page.goto(`${this.baseURL}/Login.jsp?usertype=${userType}`);
+				await this.#page.goto(`${this.baseURL}/Login.jsp?usertype=1`);
 
 				await this.#page.type('input#ssusername', username);
 				await this.#page.type('input#sspassword', password);
