@@ -5,6 +5,7 @@ module.exports = {
 		allowImportExportEverywhere: false,
 		ecmaFeatures: {
 			globalReturn: false
-		}
+		},
+		requireConfigFile: false
 	}
 };

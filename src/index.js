@@ -87,7 +87,7 @@ class SchoolSoft {
 	 * @param {String} username - The username for the login
 	 * @param {String} password - The password for the login
 	 * @returns {(Promise<Boolean>|Promise<String>)} Returns the initial fetch request to the login page on success
-	 * @example
+	 * @example <caption>Login with try/catch</caption>
 	 * try {
 	 * 	await school.login('sample', 'text');
 	 * } catch(err) {
