@@ -20,7 +20,7 @@ Testing is implemented with `jest`, and GitHub Actions should hopefully implemen
    - SCHOOLSOFT_SCHOOL
    - SCHOOLSOFT_USERNAME
    - SCHOOLSOFT_PASSWORD
-   - CHROMIUM_PATH (try without first, otherwise specify the path)
+   - CHROMIUM_PATH
 2. Run the tests by running `npm test`.
 
 ## Issues & Pull Requests
