@@ -17,8 +17,10 @@ Testing is implemented with `jest`, and GitHub Actions should hopefully implemen
 #### Testing by Yourself
 
 1. Create a `.env` file with the following environment variables:
+   - SCHOOLSOFT_SCHOOL
    - SCHOOLSOFT_USERNAME
    - SCHOOLSOFT_PASSWORD
+   - CHROMIUM_PATH (try without first, otherwise specify the path)
 2. Run the tests by running `npm test`.
 
 ## Issues & Pull Requests

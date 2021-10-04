@@ -1,7 +1,10 @@
 require('dotenv').config();
 
 const SchoolSoft = require('../src/index.js');
-const school = new SchoolSoft('engelska', '/usr/bin/chromium-browser');
+const school = new SchoolSoft(
+	process.env.SCHOOLSOFT_SCHOOL,
+	process.env.CHROMIUM_PATH
+);
 
 test('get username typeof error', async () => {
 	await expect(school.login(12345, 'yee')).rejects.toBe(

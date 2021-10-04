@@ -1,8 +1,8 @@
 const puppeteer = require('puppeteer-core');
 
 /**
- * The SchoolSoft class, everything is performed in here
- * @example <caption>CommonJS</caption>
+ * The SchoolSoft class, everything is defined in here
+ * @example <caption>CommonJS require</caption>
  * const SchoolSoft = require('schoolsoft-scraper');
  * @example <caption>ES6 Import</caption>
  * import SchoolSoft from 'schoolsoft-scraper';
@@ -32,18 +32,15 @@ class SchoolSoft {
 	/**
 	 * Creates the SchoolSoft class with everything important
 	 * @param {String} school - The school being accessed
-	 * @param {String} [path] - The puppeteer path for the chromium executable
-	 * @example <caption>Without chromium path</caption>
-	 * const SchoolSoft = require('schoolsoft-scraper');
-	 * const school = new SchoolSoft('gotland');
-	 * @example <caption>With chromium path</caption>
+	 * @param {String} path - The path to the chromium executable
+	 * @example <caption>CommonJS require</caption>
 	 * const SchoolSoft = require('schoolsoft-scraper');
 	 * const school = new SchoolSoft('engelska', '/usr/bin/chromium-browser');
 	 * @example <caption>ES6 Import</caption>
 	 * import SchoolSoft from 'schoolsoft-scraper';
-	 * const school = new SchoolSoft('medborgarskolan');
+	 * const school = new SchoolSoft('medborgarskolan', '/usr/bin/chromium-browser');
 	 */
-	constructor(school, path = '') {
+	constructor(school, path) {
 		/**
 		 * @type {String}
 		 */
@@ -54,7 +51,7 @@ class SchoolSoft {
 		this.baseURL = `https://sms14.schoolsoft.se/${school}/jsp`;
 		this.#puppeteerOptions = {
 			headless: true,
-			...(path && { executablePath: path })
+			executablePath: path
 		};
 	}
 
