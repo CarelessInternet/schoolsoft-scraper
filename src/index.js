@@ -37,7 +37,8 @@ class SchoolSoft {
 
 	/**
 	 * Launches puppeteer and opens a page
-	 * @returns {Promise<Boolean>} Returns the browser and page instance
+	 * @async
+	 * @returns {Promise<Boolean>|Promise<String>} Returns the browser and page instance
 	 */
 	#open() {
 		return new Promise(async (resolve, reject) => {
@@ -60,7 +61,7 @@ class SchoolSoft {
 	 * @param {String} username - The username for the login
 	 * @param {String} password - The password for the login
 	 * @param {{0, 1, 2}} [userType] - The type of user requesting the login, default is 1 for student, 0 for staff, and 2 for guardians
-	 * @returns {(Promise<boolean>|Promise<string>)} Returns the initial fetch request to the login page on success
+	 * @returns {(Promise<Boolean>|Promise<String>)} Returns the initial fetch request to the login page on success
 	 */
 	login(username, password, userType = 1) {
 		return new Promise(async (resolve, reject) => {
@@ -99,8 +100,9 @@ class SchoolSoft {
 	}
 
 	/**
-	 * Returns the lunch menu for the current week
-	 * @returns {Promise<String>}
+	 * Gets the lunch menu
+	 * @async
+	 * @returns {Promise<String>} Returns the lunch menu
 	 */
 	getLunchMenu() {
 		return new Promise(async (resolve, reject) => {
@@ -127,6 +129,7 @@ class SchoolSoft {
 
 	/**
 	 * Closes the browser, this should only be called after you are done with your session
+	 * @async
 	 * @returns {Promise<Boolean>|Promise<String>} Returns success on browser close, or rejects with error
 	 */
 	close() {
