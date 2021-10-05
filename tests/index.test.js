@@ -22,6 +22,7 @@ test('get invalid credentials', async () => {
 	await expect(school.login('bruh', 'moment')).rejects.toBe(
 		'Invalid username or password'
 	);
+	await school.close();
 });
 
 test(
@@ -40,8 +41,10 @@ test(
 test(
 	'grab lunch menu',
 	async () => {
-		await expect(school.getLunchMenu(true)).resolves.toMatchObject({
-			success: true
+		return school.getLunchMenu().then((data) => {
+			expect(data).toHaveProperty('heading');
+			expect(data).toHaveProperty('dates');
+			expect(data).toHaveProperty('menu');
 		});
 	},
 	15 * 1000
