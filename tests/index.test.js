@@ -33,7 +33,7 @@ test(
 				process.env.SCHOOLSOFT_USERNAME,
 				process.env.SCHOOLSOFT_PASSWORD
 			)
-		).resolves.toBe(true);
+		).resolves.toBe(`${school.baseURL}/student/right_student_startpage.jsp`);
 	},
 	10 * 1000
 );

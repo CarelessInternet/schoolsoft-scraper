@@ -83,10 +83,11 @@ class SchoolSoft {
 	 * @async
 	 * @param {String} username - The username for the login
 	 * @param {String} password - The password for the login
-	 * @returns {(Promise<Boolean>|Promise<String>)} Returns the initial fetch request to the login page on success
+	 * @returns {Promise<String>} Returns the redirected URL on success
 	 * @example <caption>Login with try/catch</caption>
 	 * try {
-	 * 	await school.login('sample', 'text');
+	 * 	const url = await school.login('sample', 'text');
+	 * 	console.log(url);
 	 * } catch(err) {
 	 * 	console.error(err);
 	 * }
@@ -117,7 +118,7 @@ class SchoolSoft {
 				}
 
 				this.#loggedIn = true;
-				resolve(true);
+				resolve(url);
 			} catch (err) {
 				reject(err);
 			}
