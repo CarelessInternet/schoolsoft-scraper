@@ -6,6 +6,8 @@ const school = new SchoolSoft(
 	process.env.CHROMIUM_PATH
 );
 
+/* LOGIN */
+
 test('get username typeof error', async () => {
 	await expect(school.login(12345, 'yee')).rejects.toBe(
 		'Username must be of type string'
@@ -38,18 +40,30 @@ test(
 	10 * 1000
 );
 
-test(
-	'grab lunch menu',
-	async () => {
-		return school.getLunchMenu().then((data) => {
-			expect(data).toHaveProperty('heading');
-			expect(data).toHaveProperty('dates');
-			expect(data).toHaveProperty('menu');
-		});
-	},
-	15 * 1000
-);
+/* LUNCH */
+
+test('grab lunch menu', async () => {
+	return expect(school.getLunchMenu()).resolves.toHaveProperty('menu');
+});
+
+test('grab lunch with specified week number', async () => {
+	return expect(school.getLunchMenu(37)).resolves.toHaveProperty('menu');
+});
+
+test('try to grab lunch with invalid week number (no school)', async () => {
+	return expect(school.getLunchMenu(30)).rejects.toBe(
+		'No lunch menu exists for that week'
+	);
+});
+
+test('try to grab lunch with invalid week type (string instead of number)', async () => {
+	return expect(school.getLunchMenu('39')).rejects.toBe(
+		'Week must be an integer'
+	);
+});
+
+/* CLOSE */
 
 test('close the browser', async () => {
-	await expect(school.close()).resolves.toBe(true);
+	await expect(school.close()).resolves.toBe('Successfully closed SchoolSoft');
 });

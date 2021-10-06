@@ -59,7 +59,7 @@ class SchoolSoft {
 	 * Launches puppeteer with an incognito tab and opens a page
 	 * @async
 	 * @private
-	 * @returns {Promise<Boolean>|Promise<String>} Returns the browser and page instance
+	 * @returns {Promise<Boolean>} Returns true when successfully opened, else returns false
 	 * @example
 	 * await this.#open()
 	 * .catch(console.error);
@@ -73,7 +73,7 @@ class SchoolSoft {
 
 				resolve(true);
 			} catch (err) {
-				reject(err);
+				reject(false);
 			}
 		});
 	}
@@ -132,30 +132,24 @@ class SchoolSoft {
 	 * @property {Array.<String>} menu - The list of meals, each element in the array is the day's lunch (mon-fri)
 	 */
 	/**
-	 * Gets the lunch menu
+	 * Fetches the menu
 	 * @async
-	 * @returns {LunchMenu} Returns the lunch menu and metadata in object form
-	 * @example <caption>Calling the function</caption>
-	 * school.getLunchMenu()
+	 * @private
+	 * @returns {Promise<LunchMenu>|Promise<String>} Returns the lunch menu on success, returns string on failure
+	 * @example
+	 * school.#fetchLunchMenu()
 	 * .then(console.log)
-	 * .catch(console.error);
-	 * @example <caption>Response example</caption>
-	 * {
-	 * 	heading: '',
-	 * 	dates: ['', '', ...],
-	 * 	menu: ['', '', ...]
-	 * }
+	 * .catch(console.error)
 	 */
-	getLunchMenu() {
+	#fetchLunchMenu() {
 		return new Promise(async (resolve, reject) => {
 			try {
-				if (!this.#loggedIn) {
-					throw 'User is not logged in';
-				}
-
-				await this.#page.goto(
-					`${this.baseURL}/student/right_student_lunchmenu.jsp`
+				const element = await this.#page.$x(
+					'//*[@id="lunchmenu_con_content"]/table[1]'
 				);
+				if (!element.length) {
+					throw 'No lunch menu exists for that week';
+				}
 
 				const [headingHandle] = await this.#page.$x(
 					'//*[@id="lunchmenu_con"]/div[1]/div[2]'
@@ -188,9 +182,84 @@ class SchoolSoft {
 	}
 
 	/**
+	 * Gets the lunch menu
+	 * @async
+	 * @param {Number} [week] - The week's lunch you want to get
+	 * @returns {Promise<LunchMenu>|Promise<String>} Returns the lunch menu and metadata in object form on success, returns string on failure
+	 * @example <caption>Function without week</caption>
+	 * school.getLunchMenu()
+	 * .then(console.log)
+	 * .catch(console.error);
+	 * @example <caption>Function with week</caption>
+	 * school.getLunchMenu(37)
+	 * .then(console.log)
+	 * .catch(console.error)
+	 * @example <caption>Response example</caption>
+	 * {
+	 * 	heading: '',
+	 * 	dates: ['', '', ...],
+	 * 	menu: ['', '', ...]
+	 * }
+	 */
+	getLunchMenu(week) {
+		return new Promise(async (resolve, reject) => {
+			try {
+				if (!this.#loggedIn) {
+					throw 'User is not logged in';
+				}
+
+				if (week) {
+					if (!Number.isInteger(week)) {
+						throw 'Week must be an integer';
+					}
+
+					await this.#page.goto(
+						`${this.baseURL}/student/right_student_lunchmenu.jsp?requestid=${week}`
+					);
+
+					const menu = await this.#fetchLunchMenu();
+					resolve(menu);
+				} else {
+					await this.#page.goto(
+						`${this.baseURL}/student/right_student_lunchmenu.jsp`
+					);
+
+					const menu = await this.#fetchLunchMenu();
+					resolve(menu);
+				}
+			} catch (err) {
+				reject(err);
+			}
+		});
+	}
+
+	/**
+	 * Gets the news
+	 * @async
+	 * @returns {Promise<Object>} Returns data about each news, split into categories
+	 * @example
+	 * school.getNews()
+	 * .then(console.log)
+	 * .catch(console.error)
+	 */
+	getNews() {
+		return new Promise(async (resolve, reject) => {
+			try {
+				if (!this.#loggedIn) {
+					throw 'User is not logged in';
+				}
+
+				const content = await this.#page.$x('//*[@id="news_con_content"]');
+			} catch (err) {
+				reject(err);
+			}
+		});
+	}
+
+	/**
 	 * Closes the browser, this should only be called after you are done with your session
 	 * @async
-	 * @returns {Promise<Boolean>|Promise<String>} Returns true on browser close, or rejects with error
+	 * @returns {Promise<String>} Returns 'Successfully closed SchoolSoft' on browser close, or rejects with error
 	 * @example
 	 * await school.close()
 	 * .catch(console.error);
@@ -203,7 +272,7 @@ class SchoolSoft {
 				}
 
 				await this.#browser.close();
-				resolve(true);
+				resolve('Successfully closed SchoolSoft');
 			} catch (err) {
 				reject(err);
 			}
