@@ -128,8 +128,9 @@ class SchoolSoft {
 	/**
 	 * @typedef {Object} LunchMenu
 	 * @property {String} heading - The heading for the table, the h2 next to the plate cutlery icon
-	 * @property {Array.<String>} dates - The date for each lunch menu in array format (mon-fri)
-	 * @property {Array.<String>} menu - The list of meals, each element in the array is the day's lunch (mon-fri)
+	 * @property {Object[]} menu - The list of meals, each element in the array is the day's lunch (mon-fri)
+	 * @property {String} menu.title - The title for the lunch menu (date)
+	 * @property {String} menu.lunch - The lunch for the date
 	 */
 	/**
 	 * Fetches the menu
@@ -163,16 +164,22 @@ class SchoolSoft {
 					return headings.map((td) => td.innerHTML);
 				});
 
-				const menu = await this.#page.evaluate(() => {
+				const lunchMenu = await this.#page.evaluate(() => {
 					const tables = Array.from(
 						document.querySelectorAll('td[style="word-wrap: break-word"]')
 					);
 					return tables.map((td) => td.innerHTML);
 				});
 
+				// schoolsoft doesnt like wrapping the date and lunch menu into their own divs
+				// so i have to iterate through each lunch menu and add the date and the lunch menu
+				// into an object
+				const menu = lunchMenu.map((value, index) => {
+					return { title: dates[index], lunch: value };
+				});
+
 				resolve({
 					heading,
-					dates,
 					menu
 				});
 			} catch (err) {
@@ -197,8 +204,7 @@ class SchoolSoft {
 	 * @example <caption>Response example</caption>
 	 * {
 	 * 	heading: '',
-	 * 	dates: ['', '', ...],
-	 * 	menu: ['', '', ...]
+	 * 	menu: [{title: '', lunch: ''}, ...]
 	 * }
 	 */
 	getLunchMenu(week) {

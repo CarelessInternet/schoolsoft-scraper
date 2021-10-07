@@ -50,13 +50,13 @@ test('grab lunch with specified week number', async () => {
 	return expect(school.getLunchMenu(37)).resolves.toHaveProperty('menu');
 });
 
-test('try to grab lunch with invalid week number (no school)', async () => {
+test('fail to grab lunch with invalid week number (no school during that week)', async () => {
 	return expect(school.getLunchMenu(30)).rejects.toBe(
 		'No lunch menu exists for that week'
 	);
 });
 
-test('try to grab lunch with invalid week type (string instead of number)', async () => {
+test('fail to grab lunch with invalid week type (string instead of number)', async () => {
 	return expect(school.getLunchMenu('39')).rejects.toBe(
 		'Week must be an integer'
 	);
