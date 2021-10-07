@@ -255,7 +255,22 @@ class SchoolSoft {
 					throw 'User is not logged in';
 				}
 
+				await this.#page.goto(`${this.baseURL}/student/right_student_news.jsp`);
+
 				const content = await this.#page.$x('//*[@id="news_con_content"]');
+				const all = await content[0].evaluate((el) => {
+					if (!el.hasChildNodes()) return [];
+
+					const elements = Array.from(el.children);
+					return elements.filter((element) => element.hasChildNodes());
+				});
+
+				if (!all.length) {
+					throw 'No news available';
+				}
+
+				// change when done
+				resolve(true);
 			} catch (err) {
 				reject(err);
 			}

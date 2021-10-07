@@ -62,6 +62,13 @@ test('fail to grab lunch with invalid week type (string instead of number)', asy
 	);
 });
 
+/* NEWS */
+
+test('fetch news', async () => {
+	// change when done
+	return expect(school.getNews()).resolves.toBe(true);
+});
+
 /* CLOSE */
 
 test('close the browser', async () => {
