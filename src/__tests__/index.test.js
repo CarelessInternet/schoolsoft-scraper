@@ -1,6 +1,6 @@
 require('dotenv').config();
 
-const SchoolSoft = require('../../dist/index').default;
+const { default: SchoolSoft } = require('../../dist/index');
 const school = new SchoolSoft(
 	process.env.SCHOOLSOFT_SCHOOL,
 	process.env.CHROMIUM_PATH

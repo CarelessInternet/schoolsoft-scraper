@@ -36,6 +36,8 @@ export interface News {
  * The SchoolSoft class, everything is defined in here
  * @example <caption>CommonJS Require</caption>
  * const SchoolSoft = require('schoolsoft-scraper').default;
+ * // OR
+ * const { default: SchoolSoft } = require('schoolsoft-scraper');
  * @example <caption>ES6 Import/TypeScript</caption>
  * import SchoolSoft from 'schoolsoft-scraper';
  */
@@ -56,6 +58,9 @@ export default class SchoolSoft {
 	 * @param {string} path - The path to the chromium executable
 	 * @example <caption>CommonJS Require</caption>
 	 * const SchoolSoft = require('schoolsoft-scraper').default;
+	 * const school = new SchoolSoft('engelska', '/usr/bin/chromium-browser');
+	 * // OR
+	 * const { default: SchoolSoft } = require('schoolsoft-scraper');
 	 * const school = new SchoolSoft('engelska', '/usr/bin/chromium-browser');
 	 * @example <caption>ES6 Import/TypeScript</caption>
 	 * import SchoolSoft from 'schoolsoft-scraper';
