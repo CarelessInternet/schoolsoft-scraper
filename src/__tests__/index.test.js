@@ -43,7 +43,7 @@ test('grab lunch menu with specified week number', () => {
 	});
 });
 
-test('fail to grab lunch with invalid week number (no school during that week)', async () => {
+test('grab lunch when there is no school (empty array)', async () => {
 	await expect(school.getLunchMenu(30)).resolves.toHaveProperty('menu', []);
 });
 
