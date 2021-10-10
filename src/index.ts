@@ -103,13 +103,13 @@ export default class SchoolSoft {
 	 * .catch(console.error)
 	 */
 	public async login(username: string, password: string): Promise<string> {
-		// if (!this.browser && !this.page) {
-		const opened = await this.open();
+		if (!this.browser && !this.page) {
+			const opened = await this.open();
 
-		if (!opened) {
-			throw new Error('Could not open SchoolSoft');
+			if (!opened) {
+				throw new Error('Could not open SchoolSoft');
+			}
 		}
-		// }
 
 		await this.page.goto(`${this.baseURL}/Login.jsp?usertype=1`);
 		await this.page.type('input#ssusername', username);
