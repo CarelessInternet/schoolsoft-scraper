@@ -1,5 +1,9 @@
 # schoolsoft-scraper
 
+## Attention!
+
+This scraper is only compatible with student accounts! You cannot use staff or guardian accounts with this scraper.
+
 ## Backstory
 
 I decided to look for the SchoolSoft API to implement my own version of SchoolSoft, however I was disappointed to find out that

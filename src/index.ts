@@ -33,7 +33,7 @@ export interface News {
 }
 
 /**
- * The SchoolSoft class, everything is defined in here
+ * The SchoolSoft class, everything is defined in here. Only compatible with student accounts
  * @example <caption>CommonJS Require</caption>
  * const SchoolSoft = require('schoolsoft-scraper').default;
  * // OR
