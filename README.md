@@ -1,5 +1,9 @@
 # schoolsoft-scraper
 
+## WARNING
+
+This branch is deprecated, please don't use this one. No updates will be pushed here, please use the `typescript` branch.
+
 ## Backstory
 
 I decided to look for the SchoolSoft API to implement my own version of SchoolSoft, however I was disappointed to find out that
