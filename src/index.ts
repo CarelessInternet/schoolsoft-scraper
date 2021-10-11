@@ -91,6 +91,20 @@ export default class SchoolSoft {
 	}
 
 	/**
+	 * Returns true if the user is logged in, else throw error
+	 * @async
+	 * @private
+	 * @returns {Promise<boolean>} Return error if user is not logged in
+	 */
+	private async isLoggedIn(): Promise<boolean> {
+		if (!this.loggedIn) {
+			throw new Error('User is not logged in');
+		}
+
+		return true;
+	}
+
+	/**
 	 * Login to SchoolSoft
 	 * @async
 	 * @public
@@ -103,6 +117,7 @@ export default class SchoolSoft {
 	 * .catch(console.error)
 	 */
 	public async login(username: string, password: string): Promise<string> {
+		// open puppeteer if there is no instance of browser and page
 		if (!this.browser && !this.page) {
 			const opened = await this.open();
 
@@ -116,6 +131,8 @@ export default class SchoolSoft {
 		await this.page.type('input#sspassword', password);
 
 		await this.page.click('input[type="submit"]');
+
+		// wait for redirect to later confirm that we have been successfully logged in
 		await this.page.waitForNavigation();
 
 		const url = this.page.url();
@@ -141,10 +158,12 @@ export default class SchoolSoft {
 	 * .catch(console.error)
 	 */
 	private async fetchLunchMenu(): Promise<LunchMenu> {
+		// get table which includes the lunch menu
 		const element = await this.page.$x(
 			'//*[@id="lunchmenu_con_content"]/table[1]'
 		);
 
+		// if there is no lunch, return empty results
 		if (!element.length) {
 			return { heading: '', menu: [] };
 		}
@@ -154,6 +173,7 @@ export default class SchoolSoft {
 		);
 		const heading = await headingHandle.evaluate((el) => el.innerHTML);
 
+		// iterate through list of dates
 		const dates = await this.page.evaluate(() => {
 			const headings = Array.from(
 				document.querySelectorAll('div[class="h3_bold"]')
@@ -161,6 +181,7 @@ export default class SchoolSoft {
 			return headings.map((td) => td.innerHTML);
 		});
 
+		// iterate through the lunch list
 		const lunchMenu = await this.page.evaluate(() => {
 			const tables = Array.from(
 				document.querySelectorAll('td[style="word-wrap: break-word"]')
@@ -169,8 +190,8 @@ export default class SchoolSoft {
 		});
 
 		// schoolsoft doesnt like wrapping the date and lunch menu into their own divs
-		// so i have to iterate through each lunch menu and add the date and the lunch menu
-		// into an object
+		// so i have to iterate through the date and lunch menu and add them
+		// into an array of objects
 		const menu = lunchMenu.map((value, index) => {
 			return { title: dates[index], lunch: value };
 		});
@@ -183,7 +204,7 @@ export default class SchoolSoft {
 	 * @async
 	 * @public
 	 * @param {Number} [week] - The week's lunch you want to get
-	 * @returns {Promise<LunchMenu>} Returns the lunch menu and metadata in object form on success, returns string on failure
+	 * @returns {Promise<LunchMenu>} Returns the lunch menu and metadata in object form on success
 	 * @example <caption>Function without week</caption>
 	 * school.getLunchMenu()
 	 * .then(console.log)
@@ -199,9 +220,7 @@ export default class SchoolSoft {
 	 * }
 	 */
 	public async getLunchMenu(week?: number): Promise<LunchMenu> {
-		if (!this.loggedIn) {
-			throw new Error('User is not logged in');
-		}
+		await this.isLoggedIn();
 
 		if (week) {
 			if (!Number.isInteger(week)) {
@@ -235,9 +254,7 @@ export default class SchoolSoft {
 	 * .catch(console.error)
 	 */
 	public async getNews(): Promise<News | boolean> {
-		if (!this.loggedIn) {
-			throw new Error('User is not logged in');
-		}
+		await this.isLoggedIn();
 
 		await this.page.goto(`${this.baseURL}/student/right_student_news.jsp`);
 
