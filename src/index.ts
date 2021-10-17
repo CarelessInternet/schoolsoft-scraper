@@ -41,7 +41,7 @@ export default class SchoolSoft {
 	 */
 	constructor(
 		public school: string,
-		path: string = '/usr/bin-chromium-browser'
+		path: string = '/usr/bin/chromium-browser'
 	) {
 		this.baseURL = `https://sms14.schoolsoft.se/${school}/jsp`;
 		this.puppeteerOptions.executablePath = path;
