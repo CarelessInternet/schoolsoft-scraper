@@ -4,33 +4,7 @@ import puppeteer, {
 	LaunchOptions,
 	Page
 } from 'puppeteer-core';
-
-/**
- * The lunch menu response type
- */
-export interface LunchMenu {
-	heading: string;
-	menu: {
-		title: string;
-		lunch: string;
-	}[];
-}
-
-/**
- * The news response type
- */
-export interface News {
-	[index: number]: {
-		category: string;
-		news: {
-			heading: string;
-			content: string;
-			date: string;
-			from: string;
-			to: string;
-		}[];
-	};
-}
+import { LunchMenu, News } from './types';
 
 /**
  * The SchoolSoft class, everything is defined in here. Only compatible with student accounts
@@ -49,7 +23,6 @@ export default class SchoolSoft {
 	private browser: Browser;
 	private page: Page;
 
-	public school: string;
 	public baseURL: string;
 
 	/**
@@ -66,8 +39,10 @@ export default class SchoolSoft {
 	 * import SchoolSoft from 'schoolsoft-scraper';
 	 * const school = new SchoolSoft('medborgarskolan', '/usr/bin/chromium-browser');
 	 */
-	constructor(school: string, path: string) {
-		this.school = school;
+	constructor(
+		public school: string,
+		path: string = '/usr/bin-chromium-browser'
+	) {
 		this.baseURL = `https://sms14.schoolsoft.se/${school}/jsp`;
 		this.puppeteerOptions.executablePath = path;
 	}
@@ -94,7 +69,7 @@ export default class SchoolSoft {
 	 * Returns true if the user is logged in, else throw error
 	 * @async
 	 * @private
-	 * @returns {Promise<boolean>} Return error if user is not logged in
+	 * @returns {Promise<boolean>} Returns error if user is not logged in
 	 */
 	private async isLoggedIn(): Promise<boolean> {
 		if (!this.loggedIn) {
@@ -252,26 +227,73 @@ export default class SchoolSoft {
 	 * school.getNews()
 	 * .then(console.log)
 	 * .catch(console.error)
+	 * @example <caption>Response example</caption>
+	 * [{
+	 * 	category: '',
+	 * 	news: [{
+	 * 			heading: '', content: '', date: '', from: '', to: ''
+	 * 	}]
+	 * }]
 	 */
-	public async getNews(): Promise<News | boolean> {
+	public async getNews(): Promise<News> {
 		await this.isLoggedIn();
 
 		await this.page.goto(`${this.baseURL}/student/right_student_news.jsp`);
 
-		const content = await this.page.$x('//*[@id="news_con_content"]');
-		const all = await content[0].evaluate((el) => {
-			if (!el.hasChildNodes()) return [];
+		const [container] = await this.page.$x('//*[@id="news_con_content"]');
+		const news: News = await container.evaluate(async (mainElement) => {
+			if (!mainElement.hasChildNodes()) {
+				return [];
+			}
 
-			const elements = Array.from(el.children);
-			return elements.filter((element) => element.hasChildNodes());
+			// absolute mess of code
+			const getNewsItems = async (element: Element) => {
+				return Array.from(element.children).map((el) => {
+					const preHeading = el.querySelector('.accordion-heading-left');
+					const heading =
+						preHeading?.querySelector('div > span')?.innerHTML ?? '';
+
+					const [accordionLeft, innerRightInfo] = [
+						el.querySelector('.accordion_inner_left'),
+						el.querySelector('.inner_right_info')
+					];
+
+					// what is this? idk https://stackoverflow.com/questions/27983388/using-innerhtml-with-queryselectorall
+					const content = [
+						...(accordionLeft?.querySelectorAll('.tinymce-p') ?? [])
+					].reduce((acc, curr) => acc + `${curr.innerHTML}\n`, '');
+
+					const from =
+						innerRightInfo?.querySelector('div:nth-child(2)')?.innerHTML ?? '';
+					const to =
+						innerRightInfo?.querySelector('div:nth-child(4)')?.innerHTML ?? '';
+					const date =
+						el.querySelector('.accordion-heading-date-wide')?.innerHTML ?? '';
+
+					return {
+						heading,
+						content,
+						date,
+						from,
+						to
+					};
+				});
+			};
+
+			let news = [];
+			for (let i = 0, all = mainElement.children; i < all.length; i++) {
+				if (all[i].classList.contains('h3_bold')) {
+					const categoryName = all[i].innerHTML;
+					const newsItem = await getNewsItems(all[i + 1]);
+
+					news.push({ category: categoryName, news: newsItem });
+				}
+			}
+
+			return news;
 		});
 
-		if (!all.length) {
-			return [];
-		}
-
-		// change when done
-		return true;
+		return news;
 	}
 
 	/**

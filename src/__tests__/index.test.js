@@ -47,6 +47,16 @@ test('grab lunch when there is no school (empty array)', async () => {
 	await expect(school.getLunchMenu(30)).resolves.toHaveProperty('menu', []);
 });
 
+/* NEWS */
+
+test('fetch news', async () => {
+	return school.getNews().then((data) => {
+		expect(data).toBeDefined();
+		expect(data[0]).toHaveProperty('category');
+		expect(data[0]).toHaveProperty(['news', 0, 'content']);
+	});
+});
+
 /* CLOSE */
 
 test('close the browser', async () => {
