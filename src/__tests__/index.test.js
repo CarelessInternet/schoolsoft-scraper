@@ -37,7 +37,7 @@ test('grab lunch menu', () => {
 });
 
 test('grab lunch menu with specified week number', () => {
-	return school.getLunchMenu().then((data) => {
+	return school.getLunchMenu(40).then((data) => {
 		expect(data).toHaveProperty('heading');
 		expect(data).toHaveProperty('menu');
 	});
