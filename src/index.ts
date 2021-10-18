@@ -1,10 +1,19 @@
+// i would like to apologize for a lack of comments
+
 import puppeteer, {
 	Browser,
 	BrowserLaunchArgumentOptions,
 	LaunchOptions,
 	Page
 } from 'puppeteer-core';
-import { LunchMenu, News } from './types';
+import {
+	AssignmentKeys,
+	Assignments,
+	LunchMenu,
+	News,
+	NewsCategoryAndNews,
+	NewsKeys
+} from './types';
 
 /**
  * The SchoolSoft class, everything is defined in here. Only compatible with student accounts
@@ -191,7 +200,7 @@ export default class SchoolSoft {
 	 * @example <caption>Response example</caption>
 	 * {
 	 * 	heading: '',
-	 * 	menu: [{title: '', lunch: ''}, ...]
+	 * 	menu: [{title, lunch}, ...]
 	 * }
 	 */
 	public async getLunchMenu(week?: number): Promise<LunchMenu> {
@@ -231,13 +240,12 @@ export default class SchoolSoft {
 	 * [{
 	 * 	category: '',
 	 * 	news: [{
-	 * 			heading: '', content: '', date: '', from: '', to: ''
+	 * 		heading, content, date, from, to
 	 * 	}]
 	 * }]
 	 */
 	public async getNews(): Promise<News> {
 		await this.isLoggedIn();
-
 		await this.page.goto(`${this.baseURL}/student/right_student_news.jsp`);
 
 		const [container] = await this.page.$x('//*[@id="news_con_content"]');
@@ -247,7 +255,7 @@ export default class SchoolSoft {
 			}
 
 			// absolute mess of code
-			const getNewsItems = async (element: Element) => {
+			const getNewsItems = async (element: Element): Promise<NewsKeys[]> => {
 				return Array.from(element.children).map((el) => {
 					const preHeading = el.querySelector('.accordion-heading-left');
 					const heading =
@@ -260,7 +268,7 @@ export default class SchoolSoft {
 
 					// what is this? idk https://stackoverflow.com/questions/27983388/using-innerhtml-with-queryselectorall
 					const content = [
-						...(accordionLeft?.querySelectorAll('.tinymce-p') ?? [])
+						...(accordionLeft?.querySelectorAll('.tinymce-p, ul') ?? [])
 					].reduce((acc, curr) => acc + `${curr.innerHTML}\n`, '');
 
 					const from =
@@ -280,20 +288,116 @@ export default class SchoolSoft {
 				});
 			};
 
-			let news = [];
+			const newsStuff: Array<NewsCategoryAndNews> = [];
 			for (let i = 0, all = mainElement.children; i < all.length; i++) {
 				if (all[i].classList.contains('h3_bold')) {
 					const categoryName = all[i].innerHTML;
 					const newsItem = await getNewsItems(all[i + 1]);
 
-					news.push({ category: categoryName, news: newsItem });
+					newsStuff.push({ category: categoryName, news: newsItem });
 				}
 			}
 
-			return news;
+			return newsStuff;
 		});
 
 		return news;
+	}
+
+	/**
+	 * Gets the upcoming and old assignments
+	 * @async
+	 * @public
+	 * @returns {Promise<Assignments>} Returns upcoming and old assignments in object form
+	 * @example
+	 * school.getAssignments()
+	 * .then(console.log)
+	 * .catch(console.error)
+	 * @example <caption>Response example</caption>
+	 * {
+	 * 	upcoming: [{heading, content, date, lesson, teacher, type, id}],
+	 * 	old: [{heading, content, date, lesson, teacher, type, id}]
+	 * }
+	 */
+	public async getAssignments(): Promise<Assignments> {
+		await this.isLoggedIn();
+		await this.page.goto(`${this.baseURL}/student/right_student_test.jsp`);
+
+		const [container] = await this.page.$x('//*[@id="test_con_content"]');
+		const assignments: Assignments = await container.evaluate(
+			async (mainElement) => {
+				if (!mainElement.hasChildNodes()) {
+					return {
+						upcoming: [],
+						old: []
+					};
+				}
+
+				const getAssignmentsItems = async (
+					element: Element
+				): Promise<AssignmentKeys[]> => {
+					return Array.from(element.children).map((el) => {
+						const [accordionHeadingLeft, accordionHeadingRight] = [
+							el.querySelector('.accordion-heading-left'),
+							el.querySelector('.accordion-heading-right')
+						];
+
+						// prettier wtf is this?
+						const date =
+							accordionHeadingLeft?.querySelector('div:nth-child(1)')
+								?.innerHTML ?? '';
+						const heading =
+							accordionHeadingLeft?.querySelector('div:nth-child(2)')
+								?.innerHTML ?? '';
+						const type =
+							accordionHeadingRight?.querySelector('div:nth-child(1)')
+								?.innerHTML ?? '';
+						const lesson =
+							accordionHeadingRight?.querySelector('div:nth-child(2)')
+								?.innerHTML ?? '';
+
+						const [accordionInnerLeft, accordionInnerRight] = [
+							el.querySelector('.accordion_inner_left'),
+							el.querySelector('.accordion_inner_right')
+						];
+
+						const content = [
+							...(accordionInnerLeft?.querySelectorAll('.tinymce-p, ul') ?? [])
+						].reduce((acc, curr) => acc + `${curr.innerHTML}\n`, '');
+
+						const teacher =
+							accordionInnerRight?.querySelector('div:nth-of-type(2)')
+								?.innerHTML ?? '';
+
+						// if no id is found for some reason, return 0 as the id
+						const id = parseInt(
+							accordionInnerLeft?.parentElement?.id.split('-')[1].slice(5) ??
+								'0'
+						);
+
+						return {
+							heading,
+							content,
+							date,
+							lesson,
+							teacher,
+							type,
+							id
+						};
+					});
+				};
+
+				const assignmentList = mainElement.querySelectorAll('#accordion');
+				const [upcoming, old] = [
+					await getAssignmentsItems(assignmentList[0]),
+					await getAssignmentsItems(assignmentList[1])
+				];
+
+				return { upcoming, old };
+			}
+		);
+
+		return assignments;
 	}
 
 	/**

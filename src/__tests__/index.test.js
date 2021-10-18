@@ -49,11 +49,21 @@ test('grab lunch when there is no school (empty array)', async () => {
 
 /* NEWS */
 
-test('fetch news', async () => {
+test('fetch news', () => {
 	return school.getNews().then((data) => {
 		expect(data).toBeDefined();
 		expect(data[0]).toHaveProperty('category');
 		expect(data[0]).toHaveProperty(['news', 0, 'content']);
+	});
+});
+
+/* ASSIGNMENTS */
+
+test('fetch new and old assignments', () => {
+	return school.getAssignments().then((data) => {
+		expect(data).toBeDefined();
+		expect(data.upcoming[0]).toHaveProperty('heading');
+		expect(data.old[0]).toHaveProperty('heading');
 	});
 });
 
