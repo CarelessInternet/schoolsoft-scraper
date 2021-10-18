@@ -13,6 +13,7 @@ The only solution was to create my own scraper using `puppeteer`/`puppeteer-core
 ## Install
 
 Install by running `npm i schoolsoft-scraper` or `npm install schoolsoft-scraper`.
+Please make sure your chromium executable is up to date as well.
 
 ## Testing
 
