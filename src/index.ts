@@ -12,7 +12,9 @@ import {
 	LunchMenu,
 	News,
 	NewsCategoryAndNews,
-	NewsKeys
+	NewsKeys,
+	ResultKeys,
+	Results
 } from './types';
 
 /**
@@ -288,7 +290,7 @@ export default class SchoolSoft {
 				});
 			};
 
-			const newsStuff: Array<NewsCategoryAndNews> = [];
+			const newsStuff: NewsCategoryAndNews[] = [];
 			for (let i = 0, all = mainElement.children; i < all.length; i++) {
 				if (all[i].classList.contains('h3_bold')) {
 					const categoryName = all[i].innerHTML;
@@ -398,6 +400,105 @@ export default class SchoolSoft {
 		);
 
 		return assignments;
+	}
+
+	/**
+	 * Gets the new and old results
+	 * @public
+	 * @async
+	 * @returns {Promise<Results>} Returns new and old results in object form
+	 * @example
+	 * school.getResults()
+	 * .then(console.log)
+	 * .catch(console.error)
+	 * @example <caption>Response example</caption>
+	 * {
+	 * 	new: [{heading, comment, description, date, lesson, teacher, type, id}],
+	 * 	old: [{heading, comment, description, date, lesson, teacher, type, id}]
+	 * }
+	 */
+	public async getResults(): Promise<Results> {
+		await this.isLoggedIn();
+		await this.page.goto(
+			`${this.baseURL}/student/right_student_test_results.jsp`
+		);
+
+		// this code is very similar to the 'getAssignments' function
+		const [container] = await this.page.$x('//*[@id="result_con_content"]');
+		const results: Results = await container.evaluate(async (mainElement) => {
+			if (!mainElement.hasChildNodes()) {
+				return {
+					new: [],
+					old: []
+				};
+			}
+
+			const getResultsItems = async (
+				element: Element
+			): Promise<ResultKeys[]> => {
+				return Array.from(element.children).map((el) => {
+					const accordionHeadingLeft = el.querySelector(
+						'.accordion-heading-left'
+					);
+					const headingAndLesson = accordionHeadingLeft
+						?.querySelector('div:nth-child(2)')
+						?.innerHTML.split(' - ');
+
+					const date =
+						accordionHeadingLeft?.querySelector('div:nth-child(1)')
+							?.innerHTML ?? '';
+					const lesson = headingAndLesson?.[0] ?? '';
+					const heading = headingAndLesson?.[1] ?? '';
+
+					const [accordionInnerLeft, accordionInnerRight] = [
+						el.querySelector('.accordion_inner_left'),
+						el.querySelector('.accordion_inner_right')
+					];
+
+					const type =
+						accordionInnerLeft?.querySelector('div:nth-of-type(1)')
+							?.innerHTML ?? '';
+					const comment =
+						accordionInnerLeft?.querySelector('div:nth-of-type(3)')
+							?.innerHTML ?? '';
+					const teacher =
+						accordionInnerRight?.querySelector('div:nth-of-type(4)')
+							?.innerHTML ?? '';
+
+					const preDescription =
+						accordionInnerRight?.querySelector('div:nth-child(1)');
+					const description = [
+						...(preDescription?.querySelectorAll('.tinymce-p, ul') ?? [])
+					].reduce((acc, curr) => acc + `${curr.innerHTML}\n`, '');
+
+					// if no id is found for some reason, return 0 as the id
+					const id = parseInt(
+						accordionInnerLeft?.parentElement?.id.split('-')[1].slice(5) ?? '0'
+					);
+
+					return {
+						heading,
+						comment,
+						description,
+						date,
+						lesson,
+						teacher,
+						type,
+						id
+					};
+				});
+			};
+
+			const resultList = mainElement.querySelectorAll('#accordion');
+			const [newResults, old] = [
+				await getResultsItems(resultList[0]),
+				await getResultsItems(resultList[1])
+			];
+
+			return { new: newResults, old };
+		});
+
+		return results;
 	}
 
 	/**

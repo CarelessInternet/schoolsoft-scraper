@@ -54,3 +54,25 @@ export interface Assignments {
 	upcoming: AssignmentKeys[];
 	old: AssignmentKeys[];
 }
+
+/**
+ * Keys for the Results interface
+ */
+export interface ResultKeys {
+	heading: string;
+	comment: string;
+	description: string;
+	date: string;
+	lesson: string;
+	teacher: string;
+	type: string;
+	id: number;
+}
+
+/**
+ * The results response type, ID of the assignment is included
+ */
+export interface Results {
+	new: ResultKeys[];
+	old: ResultKeys[];
+}

@@ -67,6 +67,16 @@ test('fetch new and old assignments', () => {
 	});
 });
 
+/* RESULTS */
+
+test('fetch new and old results', () => {
+	return school.getResults().then((data) => {
+		expect(data).toBeDefined();
+		expect(data.new[0]).toHaveProperty('heading');
+		expect(data.old[0]).toHaveProperty('heading');
+	});
+});
+
 /* CLOSE */
 
 test('close the browser', async () => {
