@@ -25,7 +25,7 @@ Testing is implemented with `jest`, and GitHub Actions should hopefully implemen
    - SCHOOLSOFT_SCHOOL
    - SCHOOLSOFT_USERNAME
    - SCHOOLSOFT_PASSWORD
-   - CHROMIUM_PATH
+   - CHROMIUM_PATH (default is `/usr/bin/chromium-browser`)
 2. Run the tests by running `npm test`.
 
 ## Issues & Pull Requests
