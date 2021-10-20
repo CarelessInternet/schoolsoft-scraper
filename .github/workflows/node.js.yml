@@ -30,6 +30,7 @@ jobs:
         SCHOOLSOFT_SCHOOL: ${{ secrets.SCHOOLSOFT_SCHOOL }}
         SCHOOLSOFT_USERNAME: ${{ secrets.SCHOOLSOFT_USERNAME }}
         SCHOOLSOFT_PASSWORD: ${{ secrets.SCHOOLSOFT_PASSWORD }}
+    - run: npm i -g npm
     - run: npm ci
     - run: npm run build --if-present
     - run: npm test
