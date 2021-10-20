@@ -17,7 +17,7 @@ Please make sure your chromium executable is up to date as well.
 
 ## Testing
 
-Testing is implemented with `jest`, and GitHub Actions should hopefully implement continuous integration to make sure everything works correctly.
+Testing is implemented with `jest`, you will have to manually test to see if everything works correctly.
 
 #### Testing by Yourself
 
