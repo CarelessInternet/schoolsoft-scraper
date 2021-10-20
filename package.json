@@ -10,8 +10,7 @@
 		"format": "prettier --write \"src/**/*.ts\" \"src/**/*.js\"",
 		"lint": "eslint . --ext .ts",
 		"testAll": "npm run format && npm run lint && npm run build && npm test",
-		"prepare": "npm run build",
-		"prepublishOnly": "npm run lint"
+		"prepublishOnly": "npm run lint && npm run build"
 	},
 	"repository": {
 		"type": "git",
