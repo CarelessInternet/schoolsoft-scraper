@@ -77,6 +77,20 @@ test('fetch new and old results', () => {
 	});
 });
 
+/* WEEKLY PLANNING */
+
+test(
+	'fetch weekly planning',
+	() => {
+		return school.getWeeklyPlanning().then((data) => {
+			expect(data).toBeDefined();
+			expect(data[0]).toHaveProperty('subject');
+			expect(data[0]).toHaveProperty('planning', 0, 'content');
+		});
+	},
+	10 * 1000
+);
+
 /* CLOSE */
 
 test('close the browser', async () => {

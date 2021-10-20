@@ -22,6 +22,9 @@ export interface NewsKeys {
 	to: string;
 }
 
+/**
+ * Category and news for the news
+ */
 export interface NewsCategoryAndNews {
 	category: string;
 	news: NewsKeys[];
@@ -75,4 +78,28 @@ export interface ResultKeys {
 export interface Results {
 	new: ResultKeys[];
 	old: ResultKeys[];
+}
+
+/**
+ * Keys for the weekly planning
+ */
+export interface WeeklyPlanningKeys {
+	week: number;
+	duration: string;
+	content: string;
+}
+
+/**
+ * Subject and planning for the weekly planning
+ */
+export interface WeeklyPlanningSubjectAndPlanning {
+	subject: string;
+	planning: WeeklyPlanningKeys[];
+}
+
+/**
+ * The weekly planning response type
+ */
+export interface WeeklyPlanning {
+	[index: number]: WeeklyPlanningSubjectAndPlanning;
 }

@@ -14,7 +14,10 @@ import {
 	NewsCategoryAndNews,
 	NewsKeys,
 	ResultKeys,
-	Results
+	Results,
+	WeeklyPlanning,
+	WeeklyPlanningKeys,
+	WeeklyPlanningSubjectAndPlanning
 } from './types';
 
 /**
@@ -50,10 +53,7 @@ export default class SchoolSoft {
 	 * import SchoolSoft from 'schoolsoft-scraper';
 	 * const school = new SchoolSoft('medborgarskolan', '/usr/bin/chromium-browser');
 	 */
-	constructor(
-		public school: string,
-		path: string = '/usr/bin/chromium-browser'
-	) {
+	constructor(public school: string, path = '/usr/bin/chromium-browser') {
 		this.baseURL = `https://sms14.schoolsoft.se/${school}/jsp`;
 		this.puppeteerOptions.executablePath = path;
 	}
@@ -256,7 +256,6 @@ export default class SchoolSoft {
 				return [];
 			}
 
-			// absolute mess of code
 			const getNewsItems = async (element: Element): Promise<NewsKeys[]> => {
 				return Array.from(element.children).map((el) => {
 					const preHeading = el.querySelector('.accordion-heading-left');
@@ -404,8 +403,8 @@ export default class SchoolSoft {
 
 	/**
 	 * Gets the new and old results
-	 * @public
 	 * @async
+	 * @public
 	 * @returns {Promise<Results>} Returns new and old results in object form
 	 * @example
 	 * school.getResults()
@@ -499,6 +498,103 @@ export default class SchoolSoft {
 		});
 
 		return results;
+	}
+
+	/**
+	 * Gets the weekly planning for each subject which has one
+	 * @async
+	 * @public
+	 * @returns {Promise<WeeklyPlanning>} Returns the weekly planning
+	 * @example
+	 * school.getWeeklyPlanning()
+	 * .then(console.log)
+	 * .catch(console.error)
+	 * @example <caption>Response example</caption>
+	 * [{
+	 * 	subject,
+	 * 	planning: [
+	 * 		{week, duration, content}
+	 * 	]
+	 * }]
+	 */
+	public async getWeeklyPlanning(): Promise<WeeklyPlanning> {
+		await this.isLoggedIn();
+		await this.page.goto(
+			`${this.baseURL}/student/right_student_planning.jsp?objectpage=1#/overview/weeklyplanning`,
+			{
+				waitUntil: 'networkidle0'
+			}
+		);
+
+		const [container] = await this.page.$x(
+			'//*[@id="content"]/div/div[2]/div[2]/div/div'
+		);
+		const weeklyPlanning: WeeklyPlanning = await container.evaluate(
+			async (mainElement) => {
+				if (!mainElement.hasChildNodes()) {
+					return [];
+				}
+
+				const getWeeklyPlanningItems = async (
+					element: Element | null
+				): Promise<WeeklyPlanningKeys[]> => {
+					if (!element) {
+						return [];
+					}
+
+					return Array.from(element.children).map((el) => {
+						const [accordionHeadingLeft, accordionHeadingDateWide] = [
+							el.querySelector('.accordion-heading-left'),
+							el.querySelector('.accordion-heading-date-wide')
+						];
+
+						const weekText =
+							accordionHeadingLeft?.querySelector(
+								'div:nth-child(1)'
+							)?.innerHTML;
+						const week = parseInt(weekText?.split(' ').at(-1) ?? '0');
+						const duration = accordionHeadingDateWide?.innerHTML ?? '';
+
+						const contentText = el.querySelector('.accordion_text');
+						const content = [
+							...(contentText?.querySelectorAll('.tinymce-p, ul') ?? [])
+						].reduce((acc, curr) => acc + `${curr.innerHTML}\n`, '');
+
+						return {
+							week,
+							duration,
+							content
+						};
+					});
+				};
+
+				const planningList: WeeklyPlanningSubjectAndPlanning[] = [];
+				const eachSubject = mainElement.children;
+				for (let i = 0; i < eachSubject.length; i++) {
+					const subjectContainer = eachSubject[i];
+
+					// stupid script tag in the container
+					if (subjectContainer instanceof HTMLScriptElement) {
+						continue;
+					}
+
+					const subjectText = subjectContainer.querySelector(
+						'div:nth-child(1) > div:nth-child(2)'
+					)?.innerHTML;
+					const subject = subjectText?.split(' - ').at(-1) ?? '';
+
+					const planningContainer =
+						subjectContainer.querySelector('#accordion');
+					const planning = await getWeeklyPlanningItems(planningContainer);
+
+					planningList.push({ subject, planning });
+				}
+
+				return planningList;
+			}
+		);
+
+		return weeklyPlanning;
 	}
 
 	/**
