@@ -607,7 +607,8 @@ export default class SchoolSoft {
 	 * .catch(console.error);
 	 */
 	public async close(): Promise<boolean> {
-		await this.browser?.close();
+		await this.page.close();
+		await this.browser.close();
 		return true;
 	}
 }
