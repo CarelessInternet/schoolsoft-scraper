@@ -1,3 +1,15 @@
+<div align="center">
+   <img src="https://shields.io/npm/v/schoolsoft-scraper?color=darkgreen">
+   <img src="https://shields.io/npm/l/schoolsoft-scraper">
+   <img src="https://shields.io/node/v/schoolsoft-scraper">
+   <img src="https://shields.io/github/languages/top/CarelessInternet/schoolsoft-scraper">
+   <img src="https://shields.io/npm/types/schoolsoft-scraper">
+   <img src="https://shields.io/github/commit-activity/m/CarelessInternet/schoolsoft-scraper/typescript?color=orange">
+   <img src="https://shields.io/npm/dw/schoolsoft-scraper">
+   <img src="https://shields.io/github/issues/CarelessInternet/schoolsoft-scraper">
+   <img src="https://shields.io/github/issues-pr/CarelessInternet/schoolsoft-scraper">
+</div>
+
 # schoolsoft-scraper
 
 ## Attention!
