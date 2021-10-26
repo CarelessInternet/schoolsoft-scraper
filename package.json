@@ -1,7 +1,7 @@
 {
 	"name": "schoolsoft-scraper",
 	"version": "1.0.1",
-	"description": "SchoolSoft scraper because there is no official public API yet",
+	"description": "SchoolSoft scraper since there is no official public API yet",
 	"main": "./dist/index.js",
 	"types": "./dist/index.d.ts",
 	"scripts": {
