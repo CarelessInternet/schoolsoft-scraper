@@ -91,6 +91,12 @@ test(
 	10 * 1000
 );
 
+/* LOGOUT */
+
+test('log out', async () => {
+	await expect(school.logout()).resolves.toBeTruthy();
+});
+
 /* CLOSE */
 
 test('close the browser', async () => {

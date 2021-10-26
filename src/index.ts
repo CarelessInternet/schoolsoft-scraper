@@ -598,6 +598,32 @@ export default class SchoolSoft {
 	}
 
 	/**
+	 * Logs out of SchoolSoft
+	 * @async
+	 * @public
+	 * @returns {Promise<boolean>} Returns true on successfully logging out, else returns false or throws an error
+	 * @example
+	 * school.logout()
+	 * .then(console.log)
+	 * .catch(console.error)
+	 */
+	public async logout(): Promise<boolean> {
+		await this.isLoggedIn();
+
+		const [response] = await Promise.all([
+			this.page.waitForNavigation(),
+			this.page.click('#logout > a[target="_top"]')
+		]);
+
+		if (response?.ok) {
+			this.loggedIn = false;
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	/**
 	 * Closes the browser, this should only be called after you are done with your session
 	 * @async
 	 * @public
