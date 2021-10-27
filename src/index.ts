@@ -1,4 +1,4 @@
-// i would like to apologize for a lack of comments
+// i would like to apologize for a lack of comments explaining the code
 
 import puppeteer, {
 	Browser,
@@ -22,6 +22,7 @@ import {
 
 /**
  * The SchoolSoft class, everything is defined in here. Only compatible with student accounts
+ * @see {@link [Wiki on GitHub](https://github.com/CarelessInternet/schoolsoft-scraper/wiki)}
  * @example <caption>CommonJS Require</caption>
  * const SchoolSoft = require('schoolsoft-scraper').default;
  * // OR
@@ -30,19 +31,42 @@ import {
  * import SchoolSoft from 'schoolsoft-scraper';
  */
 export default class SchoolSoft {
+	/**
+	 * @see {@link [Details](https://github.com/CarelessInternet/schoolsoft-scraper/wiki/Properties#schoolsoftloggedin)}
+	 */
+
 	private loggedIn = false;
+	/**
+	 * @see {@link [Details](https://github.com/CarelessInternet/schoolsoft-scraper/wiki/Properties#schoolsoftpuppeteeroptions)}
+	 */
+
 	private puppeteerOptions: LaunchOptions & BrowserLaunchArgumentOptions = {
 		headless: true
 	};
+
+	/**
+	 * @see {@link [Details](https://github.com/CarelessInternet/schoolsoft-scraper/wiki/Properties#schoolsoftbrowser)}
+	 */
+
 	private browser: Browser;
+	/**
+	 * @see {@link [Details](https://github.com/CarelessInternet/schoolsoft-scraper/wiki/Properties#schoolsoftpage)}
+	 */
+
 	private page: Page;
 
+	/**
+	 * @see {@link [Details](https://github.com/CarelessInternet/schoolsoft-scraper/wiki/Properties#schoolsoftbaseurl)}
+	 */
 	public baseURL: string;
 
 	/**
 	 * Initializes the SchoolSoft class
+	 * @constructor
 	 * @param {string} school - The school being accessed
 	 * @param {string} path - The path to the chromium executable
+	 * @see {@link [school param Details](https://github.com/CarelessInternet/schoolsoft-scraper/wiki/Properties#schoolsoftschool)}
+	 * @see {@link [Details](https://github.com/CarelessInternet/schoolsoft-scraper/wiki/Methods#initialization)}
 	 * @example <caption>CommonJS Require</caption>
 	 * const SchoolSoft = require('schoolsoft-scraper').default;
 	 * const school = new SchoolSoft('engelska', '/usr/bin/chromium-browser');
@@ -63,6 +87,7 @@ export default class SchoolSoft {
 	 * @async
 	 * @private
 	 * @returns {Promise<boolean>} Returns true on success, else false
+	 * @see {@link [Details](https://github.com/CarelessInternet/schoolsoft-scraper/wiki/Methods#schoolsoftopen)}
 	 */
 	private async open(): Promise<boolean> {
 		try {
@@ -81,6 +106,7 @@ export default class SchoolSoft {
 	 * @async
 	 * @private
 	 * @returns {Promise<boolean>} Returns error if user is not logged in
+	 * @see {@link [Details](https://github.com/CarelessInternet/schoolsoft-scraper/wiki/Methods#schoolsoftisloggedin)}
 	 */
 	private async isLoggedIn(): Promise<boolean> {
 		if (!this.loggedIn) {
@@ -97,6 +123,7 @@ export default class SchoolSoft {
 	 * @param {string} username - The username for the user
 	 * @param {string} password - The password for the user
 	 * @returns {Promise<string>} Returns the redirected URL on success, else returns the error
+	 * @see {@link [Details](https://github.com/CarelessInternet/schoolsoft-scraper/wiki/Methods#schoolsoftloginusername-password)}
 	 * @example <caption>Login with .then()</caption>
 	 * school.login('sample', 'text')
 	 * .then(console.log)
@@ -138,6 +165,7 @@ export default class SchoolSoft {
 	 * @async
 	 * @private
 	 * @returns {Promise<LunchMenu>} Returns the lunch menu on success, returns string on failure
+	 * @see {@link [Details](https://github.com/CarelessInternet/schoolsoft-scraper/wiki/Methods#schoolsoftfetchlunchmenu)}
 	 * @example
 	 * school.fetchLunchMenu()
 	 * .then(console.log)
@@ -191,6 +219,7 @@ export default class SchoolSoft {
 	 * @public
 	 * @param {Number} [week] - The week's lunch you want to get
 	 * @returns {Promise<LunchMenu>} Returns the lunch menu and metadata in object form on success
+	 * @see {@link [Details](https://github.com/CarelessInternet/schoolsoft-scraper/wiki/Methods#schoolsoftgetlunchmenuweek)}
 	 * @example <caption>Function without week</caption>
 	 * school.getLunchMenu()
 	 * .then(console.log)
@@ -234,6 +263,7 @@ export default class SchoolSoft {
 	 * @async
 	 * @public
 	 * @returns {Promise<News>} Returns data about each news, split into categories
+	 * @see {@link [Details](https://github.com/CarelessInternet/schoolsoft-scraper/wiki/Methods#schoolsoftgetnews)}
 	 * @example
 	 * school.getNews()
 	 * .then(console.log)
@@ -310,6 +340,7 @@ export default class SchoolSoft {
 	 * @async
 	 * @public
 	 * @returns {Promise<Assignments>} Returns upcoming and old assignments in object form
+	 * @see {@link [Details](https://github.com/CarelessInternet/schoolsoft-scraper/wiki/Methods#schoolsoftgetassignments)}
 	 * @example
 	 * school.getAssignments()
 	 * .then(console.log)
@@ -406,6 +437,7 @@ export default class SchoolSoft {
 	 * @async
 	 * @public
 	 * @returns {Promise<Results>} Returns new and old results in object form
+	 * @see {@link [Details](https://github.com/CarelessInternet/schoolsoft-scraper/wiki/Methods#schoolsoftgetresults)}
 	 * @example
 	 * school.getResults()
 	 * .then(console.log)
@@ -505,6 +537,7 @@ export default class SchoolSoft {
 	 * @async
 	 * @public
 	 * @returns {Promise<WeeklyPlanning>} Returns the weekly planning
+	 * @see {@link [Details](https://github.com/CarelessInternet/schoolsoft-scraper/wiki/Methods#schoolsoftgetweeklyplanning)}
 	 * @example
 	 * school.getWeeklyPlanning()
 	 * .then(console.log)
@@ -602,6 +635,7 @@ export default class SchoolSoft {
 	 * @async
 	 * @public
 	 * @returns {Promise<boolean>} Returns true on successfully logging out, else returns false or throws an error
+	 * @see {@link [Details](https://github.com/CarelessInternet/schoolsoft-scraper/wiki/Methods#schoolsoftlogout)}
 	 * @example
 	 * school.logout()
 	 * .then(console.log)
@@ -615,7 +649,10 @@ export default class SchoolSoft {
 			this.page.click('#logout > a[target="_top"]')
 		]);
 
-		if (response?.ok) {
+		if (
+			response?.ok &&
+			response?.url() === `${this.baseURL}/Login.jsp?action=logout`
+		) {
 			this.loggedIn = false;
 			return true;
 		} else {
@@ -628,6 +665,7 @@ export default class SchoolSoft {
 	 * @async
 	 * @public
 	 * @returns {Promise<boolean>} Returns true on success
+	 * @see {@link [Details](https://github.com/CarelessInternet/schoolsoft-scraper/wiki/Methods#schoolsoftclose)}
 	 * @example
 	 * school.close()
 	 * .catch(console.error);
