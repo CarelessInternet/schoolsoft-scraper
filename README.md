@@ -22,6 +22,10 @@ I decided to look for the SchoolSoft API to implement my own version of SchoolSo
 SchoolSoft has no official public API. In the website, they said they have an API package, however there is no way to publicly access it.
 The only solution was to create my own scraper using `puppeteer`/`puppeteer-core` to extract information and create my own version of SchoolSoft.
 
+## Documentation
+
+Documentation can be found in the [wiki section](https://github.com/CarelessInternet/schoolsoft-scraper/wiki) of the [GitHub repository](https://github.com/CarelessInternet/schoolsoft-scraper).
+
 ## Install
 
 Install by running `npm i schoolsoft-scraper` or `npm install schoolsoft-scraper`.
