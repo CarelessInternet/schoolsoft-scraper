@@ -58,7 +58,7 @@ export default class SchoolSoft {
 	/**
 	 * @see {@link [Details](https://github.com/CarelessInternet/schoolsoft-scraper/wiki/Properties#schoolsoftbaseurl)}
 	 */
-	public baseURL: string;
+	public readonly baseURL: string;
 
 	/**
 	 * Initializes the SchoolSoft class
@@ -77,7 +77,10 @@ export default class SchoolSoft {
 	 * import SchoolSoft from 'schoolsoft-scraper';
 	 * const school = new SchoolSoft('medborgarskolan', '/usr/bin/chromium-browser');
 	 */
-	constructor(public school: string, path = '/usr/bin/chromium-browser') {
+	constructor(
+		public readonly school: string,
+		path = '/usr/bin/chromium-browser'
+	) {
 		this.baseURL = `https://sms14.schoolsoft.se/${school}/jsp`;
 		this.puppeteerOptions.executablePath = path;
 	}
