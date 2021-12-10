@@ -10,6 +10,10 @@
    <img src="https://shields.io/github/issues-pr/CarelessInternet/schoolsoft-scraper">
 </div>
 
+# ATTENTION!
+
+This dependency is deprecated, please use [this one instead](https://www.npmjs.com/package/schoolsoft) for 100x faster results
+
 # schoolsoft-scraper
 
 ## Attention!
